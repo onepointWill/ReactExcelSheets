@@ -68,7 +68,7 @@ export default class ReactDataSheetExample extends React.Component {
 
       if (rows.length > 0) {
         const greedyData = this.state.greedyData;
-        const start = this.state.selected.start;
+        const start = this.state.selected.start; //Need to work out which position is larger. Currenty only works for start being smallest
         const end = this.state.selected.end;
 
         const iInput = rows.length
