@@ -4,15 +4,11 @@ import 'react-datasheet/lib/react-datasheet.css';
 import SheetClip from 'sheetclip'
 import Button from '@material-ui/core/Button'
 
-let lastScrollY = 0;
-let ticking = false;
-
 export default class ReactDataSheetExample extends React.Component {
     constructor(props) {
       super(props);
 
       //https://gist.github.com/koistya/934a4e452b61017ad611
-      //https://docs.github.com/en/free-pro-team@latest/github/importing-your-projects-to-github/adding-an-existing-project-to-github-using-the-command-line
 
       const greedyData = [
         [...Array(20).keys()],
@@ -74,12 +70,28 @@ export default class ReactDataSheetExample extends React.Component {
         const greedyData = this.state.greedyData;
         const start = this.state.selected.start;
         const end = this.state.selected.end;
-        
-        const iEnumerations = (end.i - start.i) / rows.length
-        const jEnumerations = (end.j - start.j) / rows.length
+
+        const iInput = rows.length
+        const jInput = rows[0].length //Assume first row matches all rows
+
+        const iDiff = end.i - start.i;
+        const jDiff = end.j - start.j;
+
+        const iEnumerations = Math.floor((iDiff) / iInput) + 1
+        const jEnumerations = Math.floor((jDiff) / jInput) + 1 
+
+        const copyMatrix = [...Array(iEnumerations)].map(i => [...Array(jEnumerations).keys()])
 
         rows.flatMap((row, row_idx) => {
-          return row.map((val, col_idx) => ({col: col_idx + start.j, row: row_idx + start.i, value: val}))
+          return row.flatMap((val, col_idx) => {
+            const j = col_idx + start.j 
+            const i = row_idx + start.i
+            return copyMatrix.flatMap((row_paste, row_paste_idx) => {
+              return row_paste.map((ignore, col_paste_idx) => {
+                return ({col: j + (col_paste_idx * jInput), row: i + (row_paste_idx * iInput), value: val})
+              })
+            })
+          })
         }).map(({col, row, value}) => {
           if (greedyData.length > row && greedyData[row].length > col) {
             greedyData[row][col] = value
@@ -93,7 +105,7 @@ export default class ReactDataSheetExample extends React.Component {
     }
 
     onSelect = selected => {
-      let tmpSelected = {...selected}
+      let tmpSelected = {start: {...selected.start}, end: {...selected.end}}
       tmpSelected.start.i += this.state.index
       tmpSelected.start.j -= 1
       tmpSelected.end.i += this.state.index
