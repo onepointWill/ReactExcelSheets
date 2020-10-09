@@ -1,11 +1,18 @@
 import React from 'react'
 import Datasheet from 'react-datasheet'
+import 'react-datasheet/lib/react-datasheet.css';
 import SheetClip from 'sheetclip'
 import Button from '@material-ui/core/Button'
+
+let lastScrollY = 0;
+let ticking = false;
 
 export default class ReactDataSheetExample extends React.Component {
     constructor(props) {
       super(props);
+
+      //https://gist.github.com/koistya/934a4e452b61017ad611
+      //https://docs.github.com/en/free-pro-team@latest/github/importing-your-projects-to-github/adding-an-existing-project-to-github-using-the-command-line
 
       const greedyData = [
         [...Array(20).keys()],
@@ -65,10 +72,14 @@ export default class ReactDataSheetExample extends React.Component {
 
       if (rows.length > 0) {
         const greedyData = this.state.greedyData;
-        const selected = this.state.selected;
+        const start = this.state.selected.start;
+        const end = this.state.selected.end;
+        
+        const iEnumerations = (end.i - start.i) / rows.length
+        const jEnumerations = (end.j - start.j) / rows.length
 
         rows.flatMap((row, row_idx) => {
-          return row.map((val, col_idx) => ({col: col_idx + selected.j, row: row_idx + selected.i, value: val}))
+          return row.map((val, col_idx) => ({col: col_idx + start.j, row: row_idx + start.i, value: val}))
         }).map(({col, row, value}) => {
           if (greedyData.length > row && greedyData[row].length > col) {
             greedyData[row][col] = value
@@ -82,9 +93,11 @@ export default class ReactDataSheetExample extends React.Component {
     }
 
     onSelect = selected => {
-      let tmpSelected = {...selected.start}
-      tmpSelected.i += this.state.index
-      tmpSelected.j -= 1
+      let tmpSelected = {...selected}
+      tmpSelected.start.i += this.state.index
+      tmpSelected.start.j -= 1
+      tmpSelected.end.i += this.state.index
+      tmpSelected.end.j -= 1
       this.state.selected = tmpSelected
     }
   

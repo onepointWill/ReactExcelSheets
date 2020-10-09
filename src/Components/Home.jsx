@@ -4,6 +4,7 @@ import Container from '@material-ui/core/Container'
 
 import ReactDataSheetExample from './ReactDataSheetExample';
 // import ReactDataGridExample from './ReactDataGridExample';
+// import JexcelExample from './JexcelExample';
 
 
 const Home = () => {
@@ -13,6 +14,7 @@ const Home = () => {
         <Container maxWidth="sm">
             <ReactDataSheetExample/>
             {/* <ReactDataGridExample/> */}
+            {/* <JexcelExample/> */}
         </Container>
     )
 }
