@@ -44,6 +44,21 @@ export default class ReactDataSheetExample extends React.Component {
       };
     }
 
+    componentDidMount() {
+      window.addEventListener("wheel", this.handleScroll);
+    }
+  
+    handleScroll = (event) => {
+      let increment;
+      if (event.deltaY>0)  {  increment = 1} 
+      else  increment=-1
+      this.changeIndex(this.state.index + increment);
+    }
+  
+    componentWillUnmount() {
+      window.removeEventListener('wheel', this.handleScroll);
+    };
+
     generateGrid = (data, index, rowsToGet) => {
       return data
         .slice(index, index + rowsToGet)
